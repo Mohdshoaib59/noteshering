@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Note Sharing System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --light: #f9f9f9;
+            --dark: #1f2937;
+            --gray: #6b7280;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            padding-top: 60px; /* To prevent the navbar from overlapping content */
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Navbar Styles */
+        nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: var(--primary);
+            padding: 15px 30px;
+            display: flex;
+            gap: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #3b39b5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            width: 100%;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #3b39b5;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+            }
+            nav {
+                flex-direction: column;
+                align-items: center;
+                top: 0;
+                right: 0;
+                padding: 20px;
+            }
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📘 Raghu Note Sharing System</h1>
+    <p>Upload and Download Notes Easily</p>
+</header>
+
+<!-- Navbar at Top-Right -->
+<nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/logout">Logout</a>
+</nav>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Upload a Note</h2>
+        <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" required><br>
+            <button type="submit">Upload</button>
+        </form>
+        <p id="fileError" style="color: red; display: none;"></p>
+    </div>
+
+    <div class="card">
+        <h2>Available Notes</h2>
+        {% if files %}
+            <ul>
+                {% for file in files %}
+                    <li>
+                        📄 <a href="{{ url_for('download_file', filename=file) }}" target="_blank">{{ file }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No notes uploaded yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const allowedExtensions = ['pdf', 'docx', 'txt'];
+        const fileError = document.getElementById("fileError");
+
+        if (file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(ext)) {
+                event.preventDefault();
+                fileError.style.display = 'block';
+                fileError.textContent = "❌ Only PDF, DOCX, or TXT files are allowed.";
+                return false;
+            }
+        }
+    });
+</script>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Raghu Note Sharing System. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
